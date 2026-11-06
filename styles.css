@@ -79,6 +79,17 @@ button { font: inherit; color: inherit; cursor: pointer; }
 }
 .logo small { display: block; font-family: var(--f-ui); font-size: 9.5px; letter-spacing: .3em; font-weight: 600; color: var(--muted); margin-top: 5px; }
 
+/* lado direito do topo: volta ao cardápio completo + carrinho */
+.top-dir { display: flex; align-items: center; gap: 8px; }
+.voltar {
+  display: inline-flex; align-items: center; gap: 4px; height: 42px; padding: 0 13px 0 9px;
+  border-radius: 999px; border: 1px solid var(--glass-edge); background: var(--glass);
+  backdrop-filter: blur(14px) saturate(1.4); -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  color: var(--ink); font-weight: 600; font-size: 13.5px; text-decoration: none;
+  transition: background .6s, border-color .6s, color .6s;
+}
+.voltar svg { width: 15px; height: 15px; }
+
 /* carrinho discreto */
 .cart {
   display: flex; align-items: center; gap: 0; height: 42px; padding: 0 11px;
@@ -469,4 +480,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
+}
+
+/* celulares estreitos: o "‹ Cardápio" vira só a setinha para caber numa linha com o carrinho */
+@media (max-width: 389px) {
+  .voltar { width: 42px; padding: 0; justify-content: center; }
+  .voltar span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 }

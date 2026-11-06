@@ -10,7 +10,7 @@ Vitrine e cardápio dos gelados da TOSTES&CO. É um site estático (HTML, CSS e 
 - `img/`: fotos recortadas com fundo transparente (.webp, 900 px de altura)
 
 ## Antes de publicar
-1. **WhatsApp:** em `bebidas.js`, troque `whatsapp: "5541999999999"` pelo número da cafeteria (55 + DDD + número, só dígitos).
+1. **WhatsApp:** o número em `bebidas.js` é o mesmo do cardápio principal (`5541988883470`). Se mudar lá, mude aqui também.
 2. **Fotos:** as fotos em `img/` são de teste (internet e bancos de imagem, uma delas com marca d'água do Freepik). Troque pelas fotos reais da casa, recortadas com fundo transparente e com o **mesmo nome de arquivo**. Depois confira os pontos da anatomia (campos `y` e `x`) de cada bebida.
 3. **Pink Girl e Mango Matcha** usam a mesma foto de teste, uma delas recolorida. Use fotos diferentes.
 
@@ -31,3 +31,7 @@ Vitrine e cardápio dos gelados da TOSTES&CO. É um site estático (HTML, CSS e 
 
 ## Abertura
 A abertura com a nevasca aparece só na primeira visita de cada celular. Para ver de novo, abra o link com `#abertura` no final.
+
+## Ligação com o cardápio principal
+- O botão "‹ Cardápio" no topo leva para https://cammeo-eng.github.io/Caf-Tostes/.
+- No cardápio principal, a pílula com floco de neve ("Gelados") em Bebidas e o item "Cafés gelados" do menu trazem para cá.
