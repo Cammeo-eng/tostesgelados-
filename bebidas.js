@@ -21,7 +21,7 @@
 window.TOSTES = {
   config: {
     // Número do WhatsApp que recebe os pedidos: 55 + DDD + número, só dígitos.
-    whatsapp: "5541999999999",
+    whatsapp: "5541988883470",
     mesas: 6,
     nomeLoja: "TOSTES&CO"
   },
