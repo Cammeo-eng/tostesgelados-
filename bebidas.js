@@ -350,7 +350,7 @@ window.TOSTES = {
     {
       id: "strawberry-latte",
       categoria: "lattes",
-      foto: "img/strawberry-latte.webp",
+      foto: "img/strawberry-latte.webp?v=3",
       escala: 0.92,
       preco: 18.00,
       fundo: { topo: "#F3C3BD", base: "#FFF6F2", luz: "#E2505A" },
