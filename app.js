@@ -360,12 +360,9 @@
     if (state.peek && !dragMoved && !e.target.closest(".cup, .nav")) closeTags();
   });
 
-  /* ---------- abertura (primeira visita) ---------- */
+  /* ---------- abertura (toda visita, fecha no botão) ---------- */
   function intro() {
-    let seen = false;
-    try { seen = localStorage.getItem("tostes-abertura-v2") === "1"; } catch (e) {}
-    if (seen && location.hash !== "#abertura") return;
-    try { localStorage.setItem("tostes-abertura-v2", "1"); } catch (e) {}
+    // aparece em toda visita e só fecha quando o cliente toca em "Entrar no frio"
     const box = $("#intro"), c = $("#introFx"), g = c.getContext("2d");
     // título letra por letra
     const t = $("#introTitle");
@@ -416,8 +413,7 @@
       setTimeout(() => { alive = false; box.hidden = true; }, 950);
     };
     $("#skip").addEventListener("click", bye);
-    box.addEventListener("click", e => { if (!e.target.closest(".skip")) bye(); });
-    setTimeout(bye, 5600);
+    addEventListener("keydown", e => { if (!box.hidden && (e.key === "Escape" || e.key === "Enter")) bye(); });
     addEventListener("resize", size);
   }
 

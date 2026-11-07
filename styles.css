@@ -443,6 +443,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 }
 
 /* ---------- Abertura ---------- */
+@keyframes convida { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,.75); } 50% { box-shadow: 0 0 0 10px rgba(255,255,255,0); } }
 .intro {
   position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; text-align: center;
   background:
@@ -475,7 +476,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   border: 1px solid rgba(255,255,255,.9); background: rgba(255,255,255,.55); color: #2B211A;
   backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   padding: 11px 26px; border-radius: 999px; font-weight: 700; font-size: 14px;
-  opacity: 0; animation: rise .8s 2.6s forwards;
+  opacity: 0; animation: rise .8s 1.9s forwards, convida 2.4s 3s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -486,4 +487,9 @@ button { font: inherit; color: inherit; cursor: pointer; }
 @media (max-width: 389px) {
   .voltar { width: 42px; padding: 0; justify-content: center; }
   .voltar span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+
+/* sem animação: a abertura aparece pronta, com texto e botão visíveis */
+@media (prefers-reduced-motion: reduce) {
+  .intro-c > *, .intro-c h2 .ch, .skip { opacity: 1 !important; transform: none !important; filter: none !important; }
 }

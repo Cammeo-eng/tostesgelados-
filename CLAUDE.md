@@ -19,4 +19,4 @@ Este é o site de cafés gelados da cafeteria TOSTES&CO (Fazenda Rio Grande, PR)
 - Os efeitos do fundo ficam num canvas: o objeto `FX` e a função `fxStep`. Para criar um efeito novo, adicione ali e documente no `LEIA-ME.md`.
 - A anatomia é feita por `openTags` e `closeTags`.
 - O carrinho fica no localStorage `tostes-pedido-v2` e o pedido vai para o WhatsApp via `wa.me`.
-- A abertura com nevasca usa a função `intro` e a chave `tostes-abertura-v2`.
+- A abertura com nevasca (função `intro`) aparece em toda visita e só fecha no botão "Entrar no frio" (ou Enter/Esc no teclado).
