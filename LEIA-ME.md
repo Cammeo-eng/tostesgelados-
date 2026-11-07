@@ -30,7 +30,7 @@ Vitrine e cardápio dos gelados da TOSTES&CO. É um site estático (HTML, CSS e 
 - A ordem das bebidas em cada aba fica no campo `ordem` da categoria.
 
 ## Abertura
-A abertura com a nevasca aparece só na primeira visita de cada celular. Para ver de novo, abra o link com `#abertura` no final.
+A abertura com a nevasca aparece em toda visita e só fecha quando o cliente toca em "Entrar no frio".
 
 ## Ligação com o cardápio principal
 - O botão "‹ Cardápio" no topo leva para https://cammeo-eng.github.io/Caf-Tostes/.
