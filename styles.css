@@ -511,6 +511,36 @@ button { font: inherit; color: inherit; cursor: pointer; }
   100% { opacity: 0; transform: rotate(var(--a)) translateY(calc(-1 * var(--d))) scale(1) rotate(180deg); }
 }
 
+/* roleta: "toque aqui" e anatomia da bebida sorteada */
+.sorte-card { --ink: #2B211A; --muted: rgba(43,33,26,.66); --glass: rgba(255,255,255,.62); --glass-edge: rgba(255,255,255,.9); }
+.reel { cursor: default; }
+.sorte.pronto .reel { cursor: pointer; }
+.reel-toque { position: absolute; left: 50%; top: 58%; width: 56px; height: 56px; margin: -28px 0 0 -28px; opacity: 0; pointer-events: none; transition: opacity .3s .4s; }
+.reel-toque::before { content: ""; position: absolute; inset: 16px; border-radius: 50%; background: rgba(255,255,255,.92); box-shadow: 0 3px 10px rgba(30,18,10,.25); }
+.reel-toque i { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(255,255,255,.95); box-shadow: 0 0 0 1px rgba(107,30,30,.15); animation: onda-r 2s ease-out infinite; }
+.reel-toque i + i { animation-delay: 1s; }
+@keyframes onda-r { 0% { transform: scale(.35); opacity: 1; } 100% { transform: scale(1.3); opacity: 0; } }
+.reel-toque b { position: absolute; top: 52px; left: 50%; transform: translateX(-50%); white-space: nowrap; padding: 4px 10px; border-radius: 999px; background: rgba(43,33,26,.8); color: #fff; font-size: 11.5px; font-weight: 700; }
+.sorte.pronto .reel-toque { opacity: 1; }
+.sorte-ver {
+  display: inline-flex; align-items: center; gap: 7px; min-height: 40px; margin-top: 8px; padding: 0 14px 0 11px;
+  border-radius: 999px; border: 1px solid rgba(107,30,30,.25); background: rgba(255,255,255,.7); color: #6B1E1E;
+  font-weight: 700; font-size: 14px; opacity: 0; pointer-events: none; transition: opacity .4s .25s;
+}
+.sorte-ver svg { width: 18px; height: 18px; animation: tap-r 2.4s ease-in-out infinite; transform-origin: 40% 80%; }
+@keyframes tap-r { 0%, 60%, 100% { transform: none; } 70% { transform: translateY(2px) scale(.9); } 80% { transform: none; } }
+.sorte.pronto .sorte-ver { opacity: 1; pointer-events: auto; }
+.sorte-ana { position: relative; display: none; height: 330px; margin: 0 -8px; cursor: pointer; }
+.sorte-ana img { position: absolute; left: 50%; bottom: 6px; height: 300px; width: auto; max-width: none; transform: translateX(-50%); filter: drop-shadow(0 12px 14px rgba(30,18,10,.25)); }
+.sorte-card.ana .reel { display: none; }
+.sorte-card.ana .sorte-ana { display: block; animation: ana-in .4s ease-out; }
+@keyframes ana-in { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: none; } }
+.sorte-card.ana { max-width: 400px; }
+.sorte-ana .tags b { font-size: 13px; }
+.sorte-ana .tags small { font-size: 11px; }
+@media (max-height: 700px) { .sorte-ana { height: 260px; } .sorte-ana img { height: 236px; } }
+@media (prefers-reduced-motion: reduce) { .reel-toque i, .sorte-ver svg { animation: none; } }
+
 /* ---------- Abertura ---------- */
 @keyframes convida { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,.75); } 50% { box-shadow: 0 0 0 10px rgba(255,255,255,0); } }
 .intro {
