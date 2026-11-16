@@ -715,8 +715,12 @@
   }
 
   /* ---------- pedido ---------- */
-  function load() { try { return JSON.parse(localStorage.getItem("tostes-pedido-v2")) || []; } catch (e) { return []; } }
-  function save() { try { localStorage.setItem("tostes-pedido-v2", JSON.stringify(state.cart)); } catch (e) {} }
+  // o pedido nunca fica salvo: cada visita começa com o carrinho vazio, para ninguém reenviar um pedido antigo sem querer
+  function load() {
+    try { ["tostes-pedido", "tostes-pedido-v2", "tostes-carrinho"].forEach(k => localStorage.removeItem(k)); } catch (e) {}
+    return [];
+  }
+  function save() {}
   function addToCart(id, acucar) {
     const key = id + "|" + acucar;
     const it = state.cart.find(x => x.key === key);
@@ -787,6 +791,15 @@
     a.href = `https://wa.me/${D.config.whatsapp}?text=${encodeURIComponent(msg)}`;
   }
   let sheetOpen = false;
+  // depois de enviar pelo WhatsApp, o carrinho é esvaziado
+  $("#send").addEventListener("click", () => {
+    if ($("#send").getAttribute("aria-disabled") === "true") return;
+    setTimeout(() => {
+      state.cart = []; renderCart(); openSheet(false);
+      $("#obs").value = "";
+      toast("Pedido enviado pelo WhatsApp");
+    }, 600);
+  });
   function openSheet(on) {
     sheetOpen = on;
     $("#sheet").classList.toggle("on", on); $("#scrim").classList.toggle("on", on);
