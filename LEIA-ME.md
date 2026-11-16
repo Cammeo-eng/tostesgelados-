@@ -35,3 +35,6 @@ A abertura com a nevasca aparece em toda visita e só fecha quando o cliente toc
 ## Ligação com o cardápio principal
 - O botão "‹ Cardápio" no topo leva para https://cammeo-eng.github.io/Caf-Tostes/.
 - No cardápio principal, a pílula com floco de neve ("Gelados") em Bebidas e o item "Cafés gelados" do menu trazem para cá.
+
+## Surpreenda-me
+O botão "Surpreenda-me" no topo da vitrine abre uma roleta com os copos girando. Ela para numa bebida aleatória, mostra o nome e o preço, e em "Quero esse!" a vitrine vai até ela. "Girar de novo" sorteia outra.

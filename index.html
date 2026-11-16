@@ -38,6 +38,10 @@
   <main class="main">
     <div class="stage" id="stage" aria-roledescription="carrossel" aria-label="Bebidas">
       <div class="ring" id="ring"></div>
+      <button class="sorte-btn" id="sorteBtn" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l1.9 5.6 5.6 1.9-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.9Z" fill="currentColor"/><path d="M19 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8Z" fill="currentColor" opacity=".7"/></svg>
+        <span>Surpreenda-me</span>
+      </button>
       <svg class="leads" id="leads" aria-hidden="true"></svg>
       <ul class="tags" id="tags" aria-label="Ingredientes"></ul>
       <div class="soon" aria-hidden="true"><b id="soonTxt"></b></div>
@@ -104,6 +108,22 @@
   </form>
 </aside>
 <div class="toast" id="toast" role="status"></div>
+
+<div class="sorte" id="sorte" hidden>
+  <div class="sorte-card" role="dialog" aria-modal="true" aria-labelledby="sorteTit">
+    <p class="sorte-tit" id="sorteTit">Sorteando o seu gelado…</p>
+    <div class="reel" aria-hidden="true"><div class="reel-strip" id="reelStrip"></div><span class="reel-seta l"></span><span class="reel-seta r"></span></div>
+    <div class="sorte-res" id="sorteRes" aria-live="polite">
+      <div class="sorte-nome" id="sorteNome"></div>
+      <div class="sorte-preco" id="sortePreco"></div>
+    </div>
+    <div class="sorte-acoes" id="sorteAcoes">
+      <button class="sorte-ok" id="sorteOk" type="button">Quero esse!</button>
+      <button class="sorte-de-novo" id="sorteDeNovo" type="button">Girar de novo</button>
+    </div>
+    <span class="sorte-confete" id="sorteConfete" aria-hidden="true"></span>
+  </div>
+</div>
 
 <div class="note-wrap" id="noteWrap" hidden>
   <article class="note" id="note" role="dialog" aria-modal="true" aria-labelledby="noteTitle">
