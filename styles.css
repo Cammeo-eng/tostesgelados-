@@ -257,11 +257,34 @@ button { font: inherit; color: inherit; cursor: pointer; }
 @keyframes done { 30% { transform: scale(.92); } 60% { transform: scale(1.05); } }
 .phrase { margin: 0; max-width: 34ch; color: var(--muted); font-size: 15px; line-height: 1.45; text-wrap: balance; }
 .peek {
-  display: inline-flex; align-items: center; gap: 7px; border: 0; background: none; padding: 4px 6px;
-  font-size: 12.5px; font-weight: 600; color: var(--muted); letter-spacing: .01em;
+  display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 0 16px 0 12px;
+  border-radius: 999px; border: 1px solid var(--glass-edge); background: var(--glass); color: var(--ink);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  font-size: 14.5px; font-weight: 700; letter-spacing: .01em;
+  transition: background .6s, color .6s, border-color .6s;
 }
-.peek svg { width: 15px; height: 15px; }
-.peek svg circle:first-child { transform-origin: 10px 10px; animation: beat 2.4s ease-in-out infinite; }
+.peek svg { width: 20px; height: 20px; transform-origin: 40% 80%; animation: tap 2.4s ease-in-out infinite; }
+@keyframes tap { 0%, 60%, 100% { transform: none; } 70% { transform: translateY(2px) scale(.9); } 80% { transform: none; } }
+
+/* "Toque aqui" pulsando em cima do copo (some depois que o cliente abre a anatomia) */
+.toque {
+  position: absolute; left: 50%; top: 54%; z-index: 110; width: 64px; height: 64px; margin: -32px 0 0 -32px;
+  border: 0; padding: 0; background: none; border-radius: 50%; cursor: pointer;
+  transition: opacity .35s;
+}
+.toque::before {
+  content: ""; position: absolute; inset: 18px; border-radius: 50%;
+  background: rgba(255,255,255,.85); box-shadow: 0 4px 14px rgba(30,18,10,.25);
+}
+.toque i { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(255,255,255,.9); animation: onda 2s ease-out infinite; }
+.toque i + i { animation-delay: 1s; }
+@keyframes onda { 0% { transform: scale(.35); opacity: 1; } 100% { transform: scale(1.25); opacity: 0; } }
+.toque span {
+  position: absolute; top: 62px; left: 50%; transform: translateX(-50%); white-space: nowrap;
+  padding: 5px 11px; border-radius: 999px; background: rgba(43,33,26,.78); color: #FFF;
+  font-size: 12.5px; font-weight: 700; letter-spacing: .02em;
+}
+.peeking .toque, .is-soon .toque, .viu-camadas .toque { opacity: 0; pointer-events: none; }
 @keyframes beat { 0%, 100% { transform: scale(1); } 50% { transform: scale(.6); } }
 
 /* ingredientes em volta do copo */
@@ -269,7 +292,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .tags li {
   position: absolute; left: 0; top: 0; white-space: nowrap;
   display: flex; align-items: center; gap: 8px;
-  padding: 6px 12px 6px 7px; border-radius: 16px;
+  padding: 8px 15px 8px 8px; border-radius: 20px;
   color: var(--ink);
   background: linear-gradient(135deg, color-mix(in srgb, var(--c) 30%, transparent), rgba(255,255,255,.18) 70%), var(--glass);
   border: 1px solid var(--glass-edge);
@@ -279,13 +302,18 @@ button { font: inherit; color: inherit; cursor: pointer; }
   transition: opacity .35s ease, transform .55s cubic-bezier(.3, 1.5, .5, 1);
   transition-delay: calc(var(--i) * 90ms + 120ms);
 }
-.tags li.r { padding: 6px 7px 6px 12px; flex-direction: row-reverse; text-align: right; }
+.tags li.r { padding: 8px 8px 8px 15px; flex-direction: row-reverse; text-align: right; }
 .tags .sw {
-  flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--c);
+  flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--c);
   border: 2px solid rgba(255,255,255,.95); box-shadow: 0 2px 6px rgba(0,0,0,.18), inset 0 -3px 6px rgba(0,0,0,.12);
 }
-.tags b { display: block; font-size: 12.5px; font-weight: 700; line-height: 1.15; }
-.tags small { display: block; font-size: 10.5px; font-weight: 500; color: var(--muted); line-height: 1.2; margin-top: 1px; }
+.tags b { display: block; font-size: 15px; font-weight: 700; line-height: 1.15; }
+.tags small { display: block; font-size: 12px; font-weight: 500; color: var(--muted); line-height: 1.25; margin-top: 2px; }
+@media (max-width: 389px) {
+  .tags li { padding: 7px 12px 7px 7px; gap: 7px; } .tags li.r { padding: 7px 7px 7px 12px; }
+  .tags .sw { width: 24px; height: 24px; }
+  .tags b { font-size: 13.5px; } .tags small { font-size: 11px; }
+}
 .tags.on li { opacity: 1; transform: translate(var(--x), var(--y)) scale(1); }
 
 /* linhas que ligam cada camada à etiqueta */
@@ -562,3 +590,4 @@ button { font: inherit; color: inherit; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   .intro-c > *, .intro-c h2 .ch, .skip { opacity: 1 !important; transform: none !important; filter: none !important; }
 }
+@media (prefers-reduced-motion: reduce) { .toque i { animation: none; opacity: .6; } .peek svg { animation: none; } }

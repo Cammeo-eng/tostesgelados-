@@ -17,7 +17,7 @@ Este é o site de cafés gelados da cafeteria TOSTES&CO (Fazenda Rio Grande, PR)
 ## Estrutura do app.js
 - O palco usa uma fileira por categoria, sem giro contínuo. A troca acontece por setas, deslize ou toque.
 - Os efeitos do fundo ficam num canvas: o objeto `FX` e a função `fxStep`. Para criar um efeito novo, adicione ali e documente no `LEIA-ME.md`.
-- A anatomia é feita por `openTags` e `closeTags`.
+- A anatomia é feita por `openTags` e `closeTags`. O convite para abrir é o botão "Toque no copo e veja o que vai" e o "Toque aqui" pulsando no copo (`#toque`), que some nesta visita depois que o cliente abre a anatomia uma vez (`sessionStorage` `tostes-viu-camadas`).
 - O carrinho fica no localStorage `tostes-pedido-v2` e o pedido vai para o WhatsApp via `wa.me`.
 - A abertura com nevasca (função `intro`) aparece em toda visita e só fecha no botão "Entrar no frio" (ou Enter/Esc no teclado).
 - "Surpreenda-me" (botão no topo do palco): roleta com os copos girando (`sortear`/`revela`), sorteia qualquer bebida diferente da atual e, em "Quero esse!", leva a vitrine até ela (`irPara`).
