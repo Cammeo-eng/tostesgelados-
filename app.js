@@ -257,7 +257,7 @@
     $("#price").innerHTML = priceHTML(d.preco);
     $("#buy").hidden = false; $("#peek").hidden = false;
     $("#story").hidden = !d.homenagem;
-    if (!state.peek) $("#peekTxt").textContent = d.homenagem ? "Ver as camadas" : "Toque no copo para ver cada camada";
+    if (!state.peek) $("#peekTxt").textContent = d.homenagem ? "Ver o que vai" : "Toque no copo e veja o que vai";
     $("#phrase").hidden = true;
     $("#add").setAttribute("aria-label", `Adicionar ${plainName(d)} ao pedido, ${money(d.preco)}`);
     markSugar();
@@ -346,16 +346,21 @@
     state.peek = true;
     $("#peek").setAttribute("aria-expanded", "true");
     $("#peekTxt").textContent = "Toque de novo para fechar";
+    // depois que o cliente descobre a anatomia, o "Toque aqui" em cima do copo some nesta visita
+    document.body.classList.add("viu-camadas");
+    try { sessionStorage.setItem("tostes-viu-camadas", "1"); } catch (e) {}
   }
   function closeTags() {
     if (!state.peek) return;
     state.peek = false;
     tagsEl.classList.remove("on"); leads.classList.remove("on"); document.body.classList.remove("peeking");
     $("#peek").setAttribute("aria-expanded", "false");
-    $("#peekTxt").textContent = state.active && state.active.homenagem ? "Ver as camadas" : "Toque no copo para ver cada camada";
+    $("#peekTxt").textContent = state.active && state.active.homenagem ? "Ver o que vai" : "Toque no copo e veja o que vai";
   }
   function toggleTags() { state.peek ? closeTags() : openTags(); }
   $("#peek").addEventListener("click", toggleTags);
+  $("#toque").addEventListener("click", e => { e.stopPropagation(); openTags(); });
+  try { if (sessionStorage.getItem("tostes-viu-camadas") === "1") document.body.classList.add("viu-camadas"); } catch (e) {}
   stage.addEventListener("click", e => {
     if (state.peek && !dragMoved && !e.target.closest(".cup, .nav")) closeTags();
   });
