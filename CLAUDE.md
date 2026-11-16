@@ -14,6 +14,8 @@ Este é o site de cafés gelados da cafeteria TOSTES&CO (Fazenda Rio Grande, PR)
 - Cada bebida tem identidade própria: fonte do nome, fundo (`fundo`) e efeito (`efeito`). Ao criar uma nova, escolha uma fonte que ainda não seja usada e inclua essa fonte no link do Google Fonts no `index.html`.
 - O My Lady Latte é uma homenagem à Priscila Tostes (campo `homenagem`). Não remova sem pedir.
 
+- **Versão dos arquivos:** a cada publicação, trocar o `?v=` dos links de `styles.css`, `bebidas.js` e `app.js` no `index.html` (ex.: `?v=20261115b`). Sem isso, o celular mistura a página nova com estilo e código antigos guardados em cache.
+
 ## Estrutura do app.js
 - O palco usa uma fileira por categoria, sem giro contínuo. A troca acontece por setas, deslize ou toque.
 - Os efeitos do fundo ficam num canvas: o objeto `FX` e a função `fxStep`. Para criar um efeito novo, adicione ali e documente no `LEIA-ME.md`.

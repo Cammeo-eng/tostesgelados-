@@ -38,3 +38,6 @@ A abertura com a nevasca aparece em toda visita e só fecha quando o cliente toc
 
 ## Surpreenda-me
 O botão "Surpreenda-me" no topo da vitrine abre uma roleta com os copos girando. Ela para numa bebida aleatória, mostra o nome e o preço, e em "Quero esse!" a vitrine vai até ela. "Girar de novo" sorteia outra.
+
+## Ao publicar qualquer mudança
+Troque o número `?v=` nos três links do `index.html` (`styles.css`, `bebidas.js`, `app.js`), por exemplo para a data do dia. Assim o celular do cliente baixa os arquivos novos em vez de usar os antigos guardados.
