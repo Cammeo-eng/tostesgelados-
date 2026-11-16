@@ -257,7 +257,7 @@
     $("#price").innerHTML = priceHTML(d.preco);
     $("#buy").hidden = false; $("#peek").hidden = false;
     $("#story").hidden = !d.homenagem;
-    if (!state.peek) $("#peekTxt").textContent = d.homenagem ? "Ver o que vai" : "Toque no copo e veja o que vai";
+    if (!state.peek) $("#peekTxt").textContent = d.homenagem ? "Ver as camadas" : "Toque no copo para ver cada camada";
     $("#phrase").hidden = true;
     $("#add").setAttribute("aria-label", `Adicionar ${plainName(d)} ao pedido, ${money(d.preco)}`);
     markSugar();
@@ -303,10 +303,9 @@
 
   /* ---------- ingredientes em volta do copo ---------- */
   const tagsEl = $("#tags"), leads = $("#leads");
-  function openTags() {
-    const d = state.active; if (!d) return;
-    const img = cups[drinks.indexOf(d)].querySelector("img");
-    const sr = stage.getBoundingClientRect(), cr = img.getBoundingClientRect();
+  // monta os balões da anatomia em volta de um copo (usado na vitrine e na roleta)
+  function montaAnatomia(d, img, box, tagsEl, leads) {
+    const sr = box.getBoundingClientRect(), cr = img.getBoundingClientRect();
     const n0 = d.ingredientes.length;
     const list = d.anatomia || d.ingredientes.map((t, i) => ({ t, y: .2 + i * .6 / Math.max(1, n0 - 1), x: i % 2 ? .68 : .32, lado: i % 2 ? "r" : "l" }));
     tagsEl.innerHTML = list.map((a, i) =>
@@ -342,25 +341,25 @@
     leads.setAttribute("viewBox", `0 0 ${sr.width} ${sr.height}`);
     leads.innerHTML = svg;
     void tagsEl.offsetWidth;
-    tagsEl.classList.add("on"); leads.classList.add("on"); document.body.classList.add("peeking");
+    tagsEl.classList.add("on"); leads.classList.add("on");
+  }
+  function openTags() {
+    const d = state.active; if (!d) return;
+    montaAnatomia(d, cups[drinks.indexOf(d)].querySelector("img"), stage, tagsEl, leads);
+    document.body.classList.add("peeking");
     state.peek = true;
     $("#peek").setAttribute("aria-expanded", "true");
     $("#peekTxt").textContent = "Toque de novo para fechar";
-    // depois que o cliente descobre a anatomia, o "Toque aqui" em cima do copo some nesta visita
-    document.body.classList.add("viu-camadas");
-    try { sessionStorage.setItem("tostes-viu-camadas", "1"); } catch (e) {}
   }
   function closeTags() {
     if (!state.peek) return;
     state.peek = false;
     tagsEl.classList.remove("on"); leads.classList.remove("on"); document.body.classList.remove("peeking");
     $("#peek").setAttribute("aria-expanded", "false");
-    $("#peekTxt").textContent = state.active && state.active.homenagem ? "Ver o que vai" : "Toque no copo e veja o que vai";
+    $("#peekTxt").textContent = state.active && state.active.homenagem ? "Ver as camadas" : "Toque no copo para ver cada camada";
   }
   function toggleTags() { state.peek ? closeTags() : openTags(); }
   $("#peek").addEventListener("click", toggleTags);
-  $("#toque").addEventListener("click", e => { e.stopPropagation(); openTags(); });
-  try { if (sessionStorage.getItem("tostes-viu-camadas") === "1") document.body.classList.add("viu-camadas"); } catch (e) {}
   stage.addEventListener("click", e => {
     if (state.peek && !dragMoved && !e.target.closest(".cup, .nav")) closeTags();
   });
@@ -458,6 +457,7 @@
     strip.innerHTML = fila.map(d => `<div class="reel-item"><img src="${d.foto}" alt="" decoding="async"></div>`).join("");
     const fim = (fila.length - 2) * ITEM_H;
     sorte.classList.remove("pronto");
+    anaRoleta(false);
     $("#sorteTit").textContent = "Sorteando o seu gelado…";
     $("#sorteNome").innerHTML = ""; $("#sortePreco").textContent = "";
     cancelAnimationFrame(sorteAnim);
@@ -473,6 +473,25 @@
       if (k < 1) sorteAnim = requestAnimationFrame(anim); else revela();
     };
     sorteAnim = requestAnimationFrame(anim);
+  }
+  // na roleta: "Toque aqui" mostra o que vai na bebida sorteada
+  function anaRoleta(abre) {
+    const card = $("#sorteCard"), box = $("#sorteAna");
+    if (!abre) {
+      card.classList.remove("ana");
+      $("#sorteAnaTags").classList.remove("on"); $("#sorteAnaLeads").classList.remove("on");
+      $("#sorteVer").setAttribute("aria-expanded", "false");
+      $("#sorteVerTxt").textContent = "Toque aqui e veja o que vai";
+      return;
+    }
+    if (!sorteado) return;
+    const img = $("#sorteAnaImg");
+    img.src = sorteado.foto;
+    card.classList.add("ana");
+    $("#sorteVer").setAttribute("aria-expanded", "true");
+    $("#sorteVerTxt").textContent = "Voltar para a roleta";
+    const monta = () => setTimeout(() => montaAnatomia(sorteado, img, box, $("#sorteAnaTags"), $("#sorteAnaLeads")), 380);
+    if (img.complete && img.naturalWidth) monta(); else img.onload = monta;
   }
   function revela() {
     strip.style.filter = "none";
@@ -503,6 +522,9 @@
   }
   $("#sorteBtn").addEventListener("click", abreSorte);
   $("#sorteDeNovo").addEventListener("click", sortear);
+  $("#sorteVer").addEventListener("click", () => anaRoleta(!$("#sorteCard").classList.contains("ana")));
+  $("#sorteReel").addEventListener("click", () => { if (sorte.classList.contains("pronto")) anaRoleta(true); });
+  $("#sorteAna").addEventListener("click", () => anaRoleta(false));
   $("#sorteOk").addEventListener("click", () => { const d = sorteado; fechaSorte(); if (d) setTimeout(() => irPara(d), 200); });
   sorte.addEventListener("click", e => { if (e.target === sorte) fechaSorte(); });
   addEventListener("keydown", e => { if (e.key === "Escape" && !sorte.hidden) fechaSorte(); });

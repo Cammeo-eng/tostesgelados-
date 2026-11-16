@@ -14,12 +14,12 @@ Este é o site de cafés gelados da cafeteria TOSTES&CO (Fazenda Rio Grande, PR)
 - Cada bebida tem identidade própria: fonte do nome, fundo (`fundo`) e efeito (`efeito`). Ao criar uma nova, escolha uma fonte que ainda não seja usada e inclua essa fonte no link do Google Fonts no `index.html`.
 - O My Lady Latte é uma homenagem à Priscila Tostes (campo `homenagem`). Não remova sem pedir.
 
-- **Versão dos arquivos:** a cada publicação, trocar o `?v=` dos links de `styles.css`, `bebidas.js` e `app.js` no `index.html` (ex.: `?v=20261115b`). Sem isso, o celular mistura a página nova com estilo e código antigos guardados em cache.
+- **Versão dos arquivos:** a cada publicação, trocar o `?v=` dos links de `styles.css`, `bebidas.js` e `app.js` no `index.html` (ex.: `?v=20261115c`). Sem isso, o celular mistura a página nova com estilo e código antigos guardados em cache.
 
 ## Estrutura do app.js
 - O palco usa uma fileira por categoria, sem giro contínuo. A troca acontece por setas, deslize ou toque.
 - Os efeitos do fundo ficam num canvas: o objeto `FX` e a função `fxStep`. Para criar um efeito novo, adicione ali e documente no `LEIA-ME.md`.
-- A anatomia é feita por `openTags` e `closeTags`. O convite para abrir é o botão "Toque no copo e veja o que vai" e o "Toque aqui" pulsando no copo (`#toque`), que some nesta visita depois que o cliente abre a anatomia uma vez (`sessionStorage` `tostes-viu-camadas`).
+- A anatomia é feita por `openTags` e `closeTags`.
 - O carrinho **nunca é salvo** (cada visita começa vazia, e chaves antigas do localStorage são apagadas) e é esvaziado depois de tocar em enviar. O pedido vai para o WhatsApp via `wa.me`.
 - A abertura com nevasca (função `intro`) aparece em toda visita e só fecha no botão "Entrar no frio" (ou Enter/Esc no teclado).
-- "Surpreenda-me" (botão no topo do palco): roleta com os copos girando (`sortear`/`revela`), sorteia qualquer bebida diferente da atual e, em "Quero esse!", leva a vitrine até ela (`irPara`).
+- "Surpreenda-me" (botão no topo do palco): roleta com os copos girando (`sortear`/`revela`), sorteia qualquer bebida diferente da atual e, em "Quero esse!", leva a vitrine até ela (`irPara`). Depois de parar, o "Toque aqui" pulsando no copo e o botão "Toque aqui e veja o que vai" mostram a anatomia da bebida sorteada dentro do cartão (`anaRoleta`, que usa a mesma `montaAnatomia` da vitrine).
