@@ -20,3 +20,4 @@ Este é o site de cafés gelados da cafeteria TOSTES&CO (Fazenda Rio Grande, PR)
 - A anatomia é feita por `openTags` e `closeTags`.
 - O carrinho fica no localStorage `tostes-pedido-v2` e o pedido vai para o WhatsApp via `wa.me`.
 - A abertura com nevasca (função `intro`) aparece em toda visita e só fecha no botão "Entrar no frio" (ou Enter/Esc no teclado).
+- "Surpreenda-me" (botão no topo do palco): roleta com os copos girando (`sortear`/`revela`), sorteia qualquer bebida diferente da atual e, em "Quero esse!", leva a vitrine até ela (`irPara`).

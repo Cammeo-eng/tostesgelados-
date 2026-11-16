@@ -99,10 +99,10 @@
     W = stage.clientWidth; H = stage.clientHeight;
     const land = W > H * 1.05;
     cups.forEach(el => {
-      const h = Math.round(H * (land ? 0.74 : 0.72) * (el._d.escala || 1));
+      const h = Math.round(H * (land ? 0.72 : 0.7) * (el._d.escala || 1));
       el.style.setProperty("--h", h + "px");
       // copo centralizado na altura do palco (um pouco acima do meio, deixando ar para o reflexo)
-      el.style.bottom = Math.max(H * 0.08, (H - h) / 2 + H * 0.03).toFixed(0) + "px";
+      el.style.bottom = Math.max(H * 0.06, (H - h - 44) / 2 + H * 0.02).toFixed(0) + "px"; // 44 px de folga em cima para o "Surpreenda-me"
     });
   }
 
@@ -190,7 +190,7 @@
   $("#next").addEventListener("click", () => step(1));
   $("#prev").addEventListener("click", () => step(-1));
   window.addEventListener("keydown", e => {
-    if (e.target.matches("input, textarea, select") || sheetOpen) return;
+    if (e.target.matches("input, textarea, select") || sheetOpen || !$("#sorte").hidden) return;
     if (e.key === "ArrowRight") step(1);
     if (e.key === "ArrowLeft") step(-1);
   });
@@ -435,6 +435,72 @@
   $("#noteClose").addEventListener("click", closeNote);
   $("#noteWrap").addEventListener("click", e => { if (e.target.id === "noteWrap") closeNote(); });
   window.addEventListener("keydown", e => { if (e.key === "Escape") closeNote(); });
+
+
+  /* ---------- surpreenda-me (roleta de copos) ---------- */
+  const sorte = $("#sorte"), strip = $("#reelStrip");
+  const ITEM_H = 168, VOLTAS = 22, DUR = 2900;
+  let sorteado = null, sorteAnim = 0;
+  function sortear() {
+    if (!drinks.length) return;
+    const atual = state.active ? state.active.id : null;
+    const opcoes = drinks.filter(d => d.id !== atual);
+    sorteado = opcoes[Math.floor(Math.random() * opcoes.length)];
+    // faixa de copos embaralhados que termina no sorteado
+    const fila = [];
+    for (let i = 0; i < VOLTAS; i++) fila.push(drinks[Math.floor(Math.random() * drinks.length)]);
+    fila.push(sorteado, drinks[Math.floor(Math.random() * drinks.length)]);
+    strip.innerHTML = fila.map(d => `<div class="reel-item"><img src="${d.foto}" alt="" decoding="async"></div>`).join("");
+    const fim = (fila.length - 2) * ITEM_H;
+    sorte.classList.remove("pronto");
+    $("#sorteTit").textContent = "Sorteando o seu gelado…";
+    $("#sorteNome").innerHTML = ""; $("#sortePreco").textContent = "";
+    cancelAnimationFrame(sorteAnim);
+    const t0 = performance.now();
+    const ease = x => { const c1 = 1.2, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); }; // desacelera com um leve quique
+    let lastY = 0;
+    const anim = now => {
+      const k = Math.min(1, (now - t0) / (reduce ? 1 : DUR));
+      const y = fim * ease(k);
+      const vel = Math.abs(y - lastY); lastY = y;
+      strip.style.transform = `translate3d(0, ${-y}px, 0)`;
+      strip.style.filter = vel > 6 ? `blur(${Math.min(5, vel / 10).toFixed(1)}px)` : "none";
+      if (k < 1) sorteAnim = requestAnimationFrame(anim); else revela();
+    };
+    sorteAnim = requestAnimationFrame(anim);
+  }
+  function revela() {
+    strip.style.filter = "none";
+    $("#sorteTit").textContent = "Hoje o seu gelado é…";
+    $("#sorteNome").innerHTML = nameHTML(sorteado);
+    $("#sortePreco").textContent = money(sorteado.preco);
+    sorte.classList.add("pronto");
+    const conf = $("#sorteConfete");
+    conf.innerHTML = Array.from({ length: 16 }, (_, i) => `<i style="--a:${i * 22.5}deg;--d:${70 + (i % 3) * 22}px"></i>`).join("");
+    conf.classList.remove("on"); void conf.offsetWidth; conf.classList.add("on");
+    setTimeout(() => $("#sorteOk").focus({ preventScroll: true }), 50);
+  }
+  function abreSorte() {
+    closeTags();
+    sorte.hidden = false; void sorte.offsetWidth; sorte.classList.add("on");
+    sortear();
+  }
+  function fechaSorte() {
+    cancelAnimationFrame(sorteAnim);
+    sorte.classList.remove("on");
+    setTimeout(() => { sorte.hidden = true; }, 380);
+  }
+  function irPara(d) {
+    const i = listOf(d.categoria).indexOf(d);
+    if (d.categoria !== state.cat) selectCat(d.categoria);
+    closeTags();
+    state.target = i;
+  }
+  $("#sorteBtn").addEventListener("click", abreSorte);
+  $("#sorteDeNovo").addEventListener("click", sortear);
+  $("#sorteOk").addEventListener("click", () => { const d = sorteado; fechaSorte(); if (d) setTimeout(() => irPara(d), 200); });
+  sorte.addEventListener("click", e => { if (e.target === sorte) fechaSorte(); });
+  addEventListener("keydown", e => { if (e.key === "Escape" && !sorte.hidden) fechaSorte(); });
 
   /* ---------- açúcar ---------- */
   const sug = $("#sugar");
