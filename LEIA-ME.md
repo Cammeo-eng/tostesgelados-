@@ -41,3 +41,6 @@ O botão "Surpreenda-me" no topo da vitrine abre uma roleta com os copos girando
 
 ## Ao publicar qualquer mudança
 Troque o número `?v=` nos três links do `index.html` (`styles.css`, `bebidas.js`, `app.js`), por exemplo para a data do dia. Assim o celular do cliente baixa os arquivos novos em vez de usar os antigos guardados.
+
+## Sacola compartilhada (20/11)
+A sacola é a mesma do cardápio principal (TOSTES café). Ao trocar de cardápio, ela passa por `sessionStorage["tostes.sacola"]` (lida e apagada na chegada; vale 30 min; ignorada em recarga). Itens do outro cardápio aparecem como "Do cardápio principal" e vão na mesma mensagem do WhatsApp. O formato é o mesmo de `js/cart.js` do repo `Caf-Tostes`: se mudar, mude nos dois e suba o `?v=`.
