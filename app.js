@@ -743,6 +743,40 @@
     return [];
   }
   function save() {}
+  /* sacola compartilhada com o cardápio principal (TOSTES café): só na hora de trocar de cardápio, via sessionStorage (chave tostes.sacola).
+     Quem chega lê e apaga na hora; recarregar, abrir do zero ou enviar o pedido não traz nada de volta. */
+  const SACOLA = "tostes.sacola", PRINCIPAL = "https://cammeo-eng.github.io/Caf-Tostes/";
+  const esc = t => String(t).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const outras = [];                                  // linhas do cardápio principal: { origem, qtd, preco, texto, nativo }
+  let sobra = null;                                   // nome, modo, mesa, obs vindos do outro cardápio
+  function importa(d) {
+    if (!d || d.v !== 1 || !Array.isArray(d.linhas) || Date.now() - d.t > 30 * 60 * 1000) return;
+    state.cart.length = 0; outras.length = 0;
+    d.linhas.forEach(x => {
+      if (!x || !(x.qtd >= 1) || !(x.preco >= 0)) return;
+      if (x.origem === "gelados") {
+        const n = x.nativo;
+        if (n && byId[n.id]) { const key = n.id + "|" + (n.acucar || ""); const e = state.cart.find(c => c.key === key); const q = Math.min(99, x.qtd); if (e) e.qtd += q; else state.cart.push({ key, id: n.id, acucar: n.acucar || "", qtd: q }); }
+      } else if (typeof x.texto === "string") outras.push({ origem: String(x.origem), qtd: Math.min(99, x.qtd), preco: +x.preco, texto: x.texto, nativo: x.nativo });
+    });
+    sobra = { nome: String(d.nome || "").slice(0, 40), modo: d.modo, mesa: d.mesa, obs: String(d.obs || "").slice(0, 140) };
+  }
+  function lerSacola() {
+    let d = null;
+    try { d = JSON.parse(sessionStorage.getItem(SACOLA)); sessionStorage.removeItem(SACOLA); } catch (e) { return false; }
+    if (!d) return false; importa(d); return true;
+  }
+  const vazio = () => !state.cart.length && !outras.length;
+  window.addEventListener("pagehide", () => {
+    try {
+      if (vazio()) { sessionStorage.removeItem(SACOLA); return; }
+      const nome = $("#cliente").value.trim(), mesaV = +$("#mesa").value;
+      const linhas = state.cart.map(x => ({ origem: "gelados", qtd: x.qtd, preco: byId[x.id].preco, texto: plainName(byId[x.id]) + (x.acucar ? ` (${x.acucar})` : ""), nativo: { id: x.id, acucar: x.acucar } }))
+        .concat(outras.map(o => ({ origem: o.origem, qtd: o.qtd, preco: o.preco, texto: o.texto, nativo: o.nativo })));
+      sessionStorage.setItem(SACOLA, JSON.stringify({ v: 1, t: Date.now(), nome, modo: modo === "mesa" ? "mesa" : "viagem", mesa: modo === "mesa" ? mesaV : null, obs: $("#obs").value.trim().slice(0, 140), linhas }));
+    } catch (e) { /* sem storage */ }
+  });
+  window.addEventListener("pageshow", e => { if (e.persisted && lerSacola()) { aplicaSobra(); renderCart(); } });
   function addToCart(id, acucar) {
     const key = id + "|" + acucar;
     const it = state.cart.find(x => x.key === key);
@@ -762,8 +796,8 @@
     const t = $("#toast"); t.textContent = msg; t.classList.add("on");
     clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("on"), 1700);
   }
-  const total = () => state.cart.reduce((s, x) => s + byId[x.id].preco * x.qtd, 0);
-  const count = () => state.cart.reduce((s, x) => s + x.qtd, 0);
+  const total = () => state.cart.reduce((s, x) => s + byId[x.id].preco * x.qtd, 0) + outras.reduce((s, o) => s + o.preco * o.qtd, 0);
+  const count = () => state.cart.reduce((s, x) => s + x.qtd, 0) + outras.reduce((s, o) => s + o.qtd, 0);
 
   let modo = "balcao";
   function renderCart() {
@@ -777,12 +811,15 @@
       const d = byId[x.id];
       return `<li class="it"><img src="${d.foto}" alt=""><div><div class="n">${plainName(d)}</div>${x.acucar ? `<div class="m">${x.acucar}</div>` : ""}<div class="p">${money(d.preco * x.qtd)}</div></div>
         <div class="qty"><button type="button" data-k="${x.key}" data-d="-1" aria-label="Remover um">−</button><span>${x.qtd}</span><button type="button" data-k="${x.key}" data-d="1" aria-label="Adicionar um">+</button></div></li>`;
-    }).join("") : `<li class="cart-empty">Seu pedido está vazio.<br>Escolha uma bebida e toque em Adicionar.</li>`;
+    }).join("") + outras.map((o, i) => `<li class="it it-outra"><div><div class="n">${esc(o.texto)}</div><div class="m">Do cardápio principal</div><div class="p">${money(o.preco * o.qtd)}</div></div>
+        <div class="qty"><button type="button" data-o="${i}" data-d="-1" aria-label="Remover um">−</button><span>${o.qtd}</span><button type="button" data-o="${i}" data-d="1" aria-label="Adicionar um">+</button></div></li>`).join("") : `<li class="cart-empty">Seu pedido está vazio.<br>Escolha uma bebida e toque em Adicionar.</li>`;
     $("#form").hidden = !n;
     $("#total").textContent = money(total());
     updateSend();
   }
   $("#items").addEventListener("click", e => {
+    const bo = e.target.closest("button[data-o]");
+    if (bo) { const o = outras[+bo.dataset.o]; if (!o) return; o.qtd = Math.min(99, o.qtd + +bo.dataset.d); if (o.qtd <= 0) outras.splice(+bo.dataset.o, 1); renderCart(); return; }
     const b = e.target.closest("button[data-k]"); if (!b) return;
     const it = state.cart.find(x => x.key === b.dataset.k); if (!it) return;
     it.qtd += +b.dataset.d;
@@ -806,7 +843,8 @@
     a.setAttribute("aria-disabled", !ok);
     $("#hint").textContent = ok ? "Abre o WhatsApp com o pedido pronto para enviar." : "Informe seu nome para enviar o pedido.";
     if (!ok) { a.removeAttribute("href"); return; }
-    const linhas = state.cart.map(x => `• ${x.qtd}x ${plainName(byId[x.id])}${x.acucar ? ` (${x.acucar})` : ""} — ${money(byId[x.id].preco * x.qtd)}`);
+    const linhas = state.cart.map(x => `• ${x.qtd}x ${plainName(byId[x.id])}${x.acucar ? ` (${x.acucar})` : ""} — ${money(byId[x.id].preco * x.qtd)}`)
+      .concat(outras.map(o => `• ${o.qtd}x ${o.texto} — ${money(o.preco * o.qtd)}`));
     const onde = modo === "mesa" ? `Consumo na mesa ${mesaSel.value}` : "Retirar no balcão";
     const obs = $("#obs").value.trim();
     const msg = [`Olá! Pedido pelo cardápio gelado da ${D.config.nomeLoja}:`, "", ...linhas, "", `Total: ${money(total())}`, `Nome: ${nome}`, onde].concat(obs ? [`Obs.: ${obs}`] : []).join("\n");
@@ -817,7 +855,7 @@
   $("#send").addEventListener("click", () => {
     if ($("#send").getAttribute("aria-disabled") === "true") return;
     setTimeout(() => {
-      state.cart = []; renderCart(); openSheet(false);
+      state.cart = []; outras.length = 0; try { sessionStorage.removeItem(SACOLA); } catch (e) {} renderCart(); openSheet(false);
       $("#obs").value = "";
       toast("Pedido enviado pelo WhatsApp");
     }, 600);
@@ -837,7 +875,22 @@
   intro();
   fxSize(); measure();
   listOf(state.cat).forEach((d, i) => { const c = cups[drinks.indexOf(d)]; c._off = i; c._vis = 1; });
-  markCat(); markSugar(); renderCart();
+  function aplicaSobra() {
+    if (!sobra) return;
+    if (sobra.nome && !$("#cliente").value) $("#cliente").value = sobra.nome;
+    if (sobra.obs && !$("#obs").value) $("#obs").value = sobra.obs;
+    if (sobra.modo === "mesa" && sobra.mesa >= 1 && sobra.mesa <= D.config.mesas) { modo = "mesa"; mesaSel.value = sobra.mesa; } else modo = "balcao";
+    $("#mode").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x.dataset.m === modo));
+    $("#mesaWrap").hidden = modo !== "mesa";
+    sobra = null;
+  }
+  (function () {
+    const nav = (performance.getEntriesByType && performance.getEntriesByType("navigation")[0]) || {};
+    const veio = (document.referrer || "").indexOf(PRINCIPAL) === 0;
+    if (nav.type === "back_forward" || (nav.type === "navigate" && veio)) lerSacola();
+    else try { sessionStorage.removeItem(SACOLA); } catch (e) {}
+  })();
+  markCat(); markSugar(); aplicaSobra(); renderCart();
   requestAnimationFrame(t => { t0 = t; requestAnimationFrame(frame); });
   const relayout = () => { fxSize(); measure(); markCat(); markSugar(); closeTags(); };
   window.addEventListener("resize", relayout);
